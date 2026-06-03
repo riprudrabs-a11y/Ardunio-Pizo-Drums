@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Arduino Drum Kit</title>
+<style>
+  body { font-family: Arial; background:#111; color:white; text-align:center; }
+  .pad { width:120px; height:120px; display:inline-block; margin:20px;
+         border-radius:10px; background:#333; transition:0.1s; line-height:120px; }
+  .active { background:#0f0; }
+</style>
+</head>
+<body>
+
+<h1>Arduino Drum Kit</h1>
+<button id="connect">Connect to Arduino</button>
+
+<div>
+  <div id="KICK" class="pad">KICK</div>
+  <div id="SNARE" class="pad">SNARE</div>
+  <div id="TOM" class="pad">TOM</div>
+  <div id="HAT" class="pad">HAT</div>
+  <div id="CRASH" class="pad">CRASH</div>
+</div>
+
+<audio id="kick" src="kick.wav"></audio>
+<audio id="snare" src="snare.wav"></audio>
+<audio id="tom" src="tom.wav"></audio>
+<audio id="hat_close" src="hat_close.wav"></audio>
+<audio id="hat_open" src="hat_open.wav"></audio>
+<audio id="crash" src="crash.wav"></audio>
+
+<script>
+let port, reader;
+let serialBuffer = "";
+
+document.getElementById("connect").onclick = async () => {
+  try {
+    port = await navigator.serial.requestPort();
+    await port.open({ baudRate: 115200 });
+
+    reader = port.readable.getReader();
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) {
+        reader.releaseLock();
+        break;
+      }
+
+      if (value) {
+        handleSerialChunk(new TextDecoder().decode(value));
+      }
+    }
+  } catch (err) {
+    console.error("Serial connection error:", err);
+  } finally {
+    if (reader) {
+      reader.releaseLock();
+    }
+  }
+};
+
+function handleSerialChunk(text) {
+  serialBuffer += text;
+  const lines = serialBuffer.split(/\r?\n/);
+  serialBuffer = lines.pop();
+
+  for (const line of lines) {
+    handleSerial(line);
+  }
+}
+
+function handleSerial(text) {
+  text = text.trim().toUpperCase();
+  if (!text) return;
+
+  const match = text.match(/^(KICK|SNARE|TOM|HAT|CRASH)([123])\b/);
+  if (!match) return;
+
+  const pad = match[1];
+  const level = match[2];
+  playPad(pad, level);
+}
+
+function playPad(pad, level) {
+  const padDiv = document.getElementById(pad);
+  padDiv.classList.add("active");
+
+  let audioId;
+
+  if (pad === "HAT") {
+    if (level === "3") {
+      audioId = "hat_open";
+    } else {
+      audioId = "hat_close";
+    }
+  } else {
+    audioId = pad.toLowerCase();
+  }
+
+  let playbackRate = 1.0;
+  if (level === "1") playbackRate = 1.65;
+  else if (level === "2") playbackRate = 1.0;
+  else playbackRate = 0.6;
+
+  playSample(audioId, playbackRate);
+
+  setTimeout(() => padDiv.classList.remove("active"), 120);
+}
+
+function playSample(audioId, playbackRate) {
+  const source = document.getElementById(audioId);
+  const audio = source.cloneNode();
+  audio.playbackRate = playbackRate;
+  audio.volume = 1.0;
+  document.body.appendChild(audio);
+
+  audio.play().catch(err => console.error("Audio play error:", err));
+  audio.onended = () => audio.remove();
+}
+</script>
+
+</body>
+</html>
