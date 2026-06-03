@@ -6,11 +6,16 @@ A miniature, highly responsive 5-piece electronic drum kit built using an Arduin
 * **Time to Build:** 2 months (Includes learning curve, circuit design, software integration, and troubleshooting).
 * **Developer:** Solo project by a middle schooler with 5 years of Vex IQ robotics experience.
 * **Resources Used:** Built using open-source Arduino community guides and Web Serial documentation, adapted for this custom 5-drum configuration.
-
+  
+ ---
+ 
 ### Files
-1. Arduino Drums Case .mhtml: This is a onshape 3d print that you can use for the case for the project
-2. Folder HTML Code: This is the folder that has the HTML webpage and all the sounds(Make sure the sounds are in the same folder)
-3. Arduino_drums.ino: ardunio ide code make sure to uplode into ardunio
+1. Folder HTML Code: This is the folder that has the HTML webpage and all the sounds(Make sure the sounds are in the same folder)
+2. Arduino Drums Case .mhtml: This is a onshape 3d print that you can use for the case for the project
+3. Ardunio drums.fzz: this is the fritzing file if you want to see
+4. Drums_fritzing.png: this is a image if you dont have fritzing
+5. Arduino_drums.ino: ardunio ide code make sure to uplode into ardunio
+   
 
 ---
 
