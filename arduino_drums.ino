@@ -33,6 +33,10 @@ void loop() {
       envelope[i] -= fadeSpeed;
       if (envelope[i] < 0) envelope[i] = 0;
     }
+    
+    //TrunoffLED
+    analogWrite(ledPins[i], 0);
+
     if (raw > threshold) {
       if (!isActive[i]) {
         isActive[i] = true;
@@ -42,12 +46,19 @@ void loop() {
       unsigned long durationMs = millis() - hitStart[i];
       Serial.println(names[i] + getSpeedLevel(durationMs));
       isActive[i] = false;
-    }
-    int brightness = map(envelope[i], 0, 1023, 0, 255);
-    if (brightness > 0 && brightness < 25) {
-      brightness = 25;
-    }
-    analogWrite(ledPins[i], brightness);
+
+        //TurnOnLED
+        int brightness = map(envelope[i], 0, 1023, 0, 255);
+        if (brightness > 0 && brightness < 25) {
+            brightness = 25;
+        }
+        
+        analogWrite(ledPins[i], brightness);
+
+      }
+
+    
+   
   }
   delay(3);
 }
