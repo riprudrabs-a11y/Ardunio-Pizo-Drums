@@ -65,11 +65,11 @@ This project connects hardware and software together using electrical signals:
 ### [1] Introduction
 The goal of this project is to see if you can use piezoelectric sensors and a running HTML program so that whenever you touch a sensor, it sends a small signal. An LED lights up, and the Arduino microcontroller receives the signal and passes it to the HTML program, which plays sounds based on how much time you press the sensor.
 
-### [4] Hypothesis
+### [2] Hypothesis
 If a piezoelectric sensor is tapped or pressed for different lengths of time, then the Arduino will measure the exact duration of the touch, instantly light up an LED, and signal an HTML program to alter the playback pitch and speed of a drum sound based on that duration, because the microcontroller can translate varying physical vibration times into distinct digital speed categories.
 
-### [2] Analysis
+### [3] Analysis
 The system uses an envelope-following algorithm to track physical vibrations. When a sensor is struck, the Arduino captures the input data. Once the sensor's voltage falls back below the threshold, the total duration of the hit is calculated. The data is split into three duration tiers and transmitted over a 115,200 baud Serial connection via Web Serial API to the browser. The HTML program dynamically modifies the `playbackRate` property of the audio elements based on these tiers, shifting the pitch and speed of the drum sample to match the player's touch.
 
-### [8] Results
+### [4] Results
 The project successfully achieved real-time, touch-duration audio manipulation. Testing showed that lighter, crisper taps successfully triggered fast playback speeds (pitching the sample up), while longer, heavier presses accurately triggered slower, deeper playback speeds. Simultaneously, the LEDs successfully matched the intensity of the hits using Pulse Width Modulation (`analogWrite`) mapped to the sensor's peak electrical envelope.
